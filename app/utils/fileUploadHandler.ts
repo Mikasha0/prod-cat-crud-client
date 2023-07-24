@@ -1,17 +1,15 @@
-import { unstable_createFileUploadHandler} from "@remix-run/node";
+import { unstable_createFileUploadHandler, unstable_createMemoryUploadHandler} from "@remix-run/node";
 import type { UploadHandler, UploadHandlerPart } from "@remix-run/node";
 
 
-export const fileUploadHandler = unstable_createFileUploadHandler({
-  directory: "./public/images",
-  maxPartSize: 10_000_000,
-  file: ({ filename }) => filename,
+export const fileUploadHandler = unstable_createMemoryUploadHandler({
+  //directory: "./public/images",
 });
 
 export const fileAndFieldUploadHandler: UploadHandler = async (part) => {
   if (
     part.name === "category" ||
-    part.name === "product-name" ||
+    part.name === "product" ||
     part.name === "description" ||
     part.name === "highlight"||
     part.name === "status"

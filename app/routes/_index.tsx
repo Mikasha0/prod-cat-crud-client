@@ -1,6 +1,14 @@
-import type { V2_MetaFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { Status } from "~/types/z.schema";
+import {
+  unstable_parseMultipartFormData,
+  type ActionArgs,
+  type V2_MetaFunction,
+  redirect,
+} from "@remix-run/node";
+import { Form, useLoaderData } from "@remix-run/react";
+import { Status, productSchemaObj } from "~/types/z.schema";
+import { fileAndFieldUploadHandler } from "~/utils/fileUploadHandler";
+import { getProductFormData } from "~/utils/formUtils";
+import { badRequest } from "~/utils/request.server";
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -15,13 +23,43 @@ export const loader = async () => {
   return data;
 };
 
+export const action = async ({ request }: ActionArgs) => {
+  const form = await unstable_parseMultipartFormData(
+    request,
+    fileAndFieldUploadHandler
+  );
+  const { category, product, description, highlight, status, image } =
+    getProductFormData(form);
+  console.log(category, product, description, highlight, status, image);
+  console.log("Image is", image)
+  const parseResult = productSchemaObj.safeParse({
+    category,
+    product,
+    description,
+    highlight,
+    status,
+    image,
+  });
+  if(!parseResult.success){
+    console.log(parseResult.error)
+    const fieldErrors = parseResult.error.format();
+    return badRequest({
+      fieldErrors,
+      fields:null,
+      formError:"Form not submitted correctly",
+    })
+  }
+  console.log(parseResult.data)
+  return redirect('/')
+};
+
 export default function Index() {
   const data = useLoaderData<typeof loader>();
 
   return (
     <div className="flex justify-center items-center h-screen bg-[#f3f4f6] ">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        <form method="post" encType="multipart/form-data">
+        <Form method="post" encType="multipart/form-data">
           <div className="mb-6">
             <label
               htmlFor="category"
@@ -31,6 +69,7 @@ export default function Index() {
             </label>
             <select
               id="category"
+              name="category"
               className="shadow-sm bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
             >
               {data.map((category: any) => (
@@ -42,14 +81,14 @@ export default function Index() {
           </div>
           <div className="mb-6">
             <label
-              htmlFor="product-name"
+              htmlFor="product"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Product Name
             </label>
             <input
               type="text"
-              name="product-name"
+              name="product"
               id="product-name"
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
               required
@@ -93,7 +132,8 @@ export default function Index() {
               Status:
             </label>
             <select
-              id="category"
+              id="stautus"
+              name="status"
               className="shadow-sm bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
             >
               {Status.map((status) => (
@@ -105,7 +145,7 @@ export default function Index() {
           </div>
           <div className="mb-6">
             <label
-              htmlFor="status"
+              htmlFor="images"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Images
@@ -124,7 +164,7 @@ export default function Index() {
           >
             Post Product
           </button>
-        </form>
+        </Form>
       </div>
     </div>
   );

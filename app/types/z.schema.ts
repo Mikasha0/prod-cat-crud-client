@@ -30,5 +30,4 @@ export const productSchemaObj = z.object({
   description: z.string(),
   highlight: z.string(),
   status: z.string(),
-  image: z.any(),
 });

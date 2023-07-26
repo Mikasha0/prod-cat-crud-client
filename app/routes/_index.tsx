@@ -36,24 +36,19 @@ export const loader = async () => {
 };
 
 export const action = async ({ request }: ActionArgs) => {
-  const form = await unstable_parseMultipartFormData(
-    request,
-    fileAndFieldUploadHandler
-  );
+  const form = await await request.formData()
   // const imageBuffer = fs.createReadStream('/images/test.png')
   // console.log(imageBuffer)
 
-  const { categoryId, name, description, highlight, status, image } =
+  const { categoryId, name, description, highlight, status } =
     getProductFormData(form);
-  console.log(categoryId, name, description, highlight, status, image);
-  console.log("Image is", image)
+    console.log(getProductFormData(form));
   const parseResult = productSchemaObj.safeParse({
     categoryId,
     name,
     description,
     highlight,
     status,
-    image
   });
   if(!parseResult.success){
     const fieldErrors = parseResult.error.format();
@@ -63,19 +58,35 @@ export const action = async ({ request }: ActionArgs) => {
       formError:"Form not submitted correctly",
     })
   }
+  console.log(parseResult)
 
-  const API_URL = `http://localhost:3334/api/products`
-  console.log(API_URL);
-  try{
-    const response = await fetch(API_URL,{
-      method:'POST',
-      body:JSON.stringify(parseResult.data)
-    });
-    const product_data = await response.json()
-    console.log(product_data);
-  }catch(error){
-    return new Response("API request error", {status:500})
+  const fields = {
+    categoryId,
+    name,
+    description,
+    highlight,
+    status
   }
+  console.log("fields",fields)
+
+   await db.product.create({
+    data:{
+      ...fields,
+    }
+  })
+
+  // const API_URL = `http://localhost:3334/api/products`
+  // console.log(API_URL);
+  // try{
+  //   const response = await fetch(API_URL,{
+  //     method:'POST',
+  //     body:JSON.stringify(parseResult.data)
+  //   });
+  //   const product_data = await response.json()
+  //   console.log(product_data);
+  // }catch(error){
+  //   return new Response("API request error", {status:500})
+  // }
 
   return redirect('/')
 };

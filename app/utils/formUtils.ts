@@ -5,6 +5,5 @@ export function getProductFormData(form: FormData){
         description : form.get("description") as string,
         highlight : form.get("highlight") as string,
         status : form.get("status")as any,
-        image : form.get("image") as string,
     };
 }

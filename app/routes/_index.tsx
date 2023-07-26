@@ -9,6 +9,8 @@ import { Status, productSchemaObj } from "~/types/z.schema";
 import { fileAndFieldUploadHandler } from "~/utils/fileUploadHandler";
 import { getProductFormData } from "~/utils/formUtils";
 import { badRequest } from "~/utils/request.server";
+import { db } from "~/utils/db.server";
+
 import * as fs from 'fs'
 import test from '~/images/test.png'
 
@@ -22,9 +24,15 @@ export const meta: V2_MetaFunction = () => {
 };
 
 export const loader = async () => {
-  const API_RESPONSE = await fetch(`http://localhost:3334/api/categories`);
-  const data = await API_RESPONSE.json();
-  return data;
+  // const API_RESPONSE = await fetch(`http://localhost:3334/api/categories`);
+  // const data = await API_RESPONSE.json();
+  // return data;
+  const categoryItems = await db.category.findMany({
+    take:35,
+    select:{id:true,name:true}
+  });
+  return categoryItems
+
 };
 
 export const action = async ({ request }: ActionArgs) => {
@@ -161,21 +169,6 @@ export default function Index() {
                 </option>
               ))}
             </select>
-          </div>
-          <div className="mb-6">
-            <label
-              htmlFor="images"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Images
-            </label>
-            <input
-              id="image"
-              type="file"
-              name="image"
-              accept="image/*"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-            />
           </div>
           <button
             type="submit"

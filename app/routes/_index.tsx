@@ -12,7 +12,7 @@ import { badRequest } from "~/utils/request.server";
 
 export const meta: V2_MetaFunction = () => {
   return [
-    { title: "New Remix App" },
+    { title: "PROD-CAT-CRUD-CLIENT" },
     { name: "description", content: "Welcome to Remix!" },
   ];
 };
@@ -28,20 +28,19 @@ export const action = async ({ request }: ActionArgs) => {
     request,
     fileAndFieldUploadHandler
   );
-  const { category, product, description, highlight, status, image } =
+  const { categoryId, name, description, highlight, status, image } =
     getProductFormData(form);
-  console.log(category, product, description, highlight, status, image);
+  console.log(categoryId, name, description, highlight, status, image);
   console.log("Image is", image)
   const parseResult = productSchemaObj.safeParse({
-    category,
-    product,
+    categoryId,
+    name,
     description,
     highlight,
     status,
     image,
   });
   if(!parseResult.success){
-    console.log(parseResult.error)
     const fieldErrors = parseResult.error.format();
     return badRequest({
       fieldErrors,
@@ -49,7 +48,24 @@ export const action = async ({ request }: ActionArgs) => {
       formError:"Form not submitted correctly",
     })
   }
-  console.log(parseResult.data)
+  console.log(parseResult.data.image.name)
+
+  const API_URL = `http://localhost:3334/api/products`
+  console.log(API_URL);
+  try{
+    const response = await fetch(API_URL,{
+      method:'POST',
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify(parseResult.data)
+    });
+    const product_data = await response.json()
+    console.log(product_data);
+  }catch(error){
+    return new Response("API request error", {status:500})
+  }
+
   return redirect('/')
 };
 
@@ -68,8 +84,8 @@ export default function Index() {
               Select a category:
             </label>
             <select
-              id="category"
-              name="category"
+              id="categoryId"
+              name="categoryId"
               className="shadow-sm bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
             >
               {data.map((category: any) => (
@@ -88,8 +104,8 @@ export default function Index() {
             </label>
             <input
               type="text"
-              name="product"
-              id="product-name"
+              name="name"
+              id="name"
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
               required
             />

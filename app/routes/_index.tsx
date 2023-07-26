@@ -35,7 +35,19 @@ export const loader = async () => {
 
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export async function action(args: ActionArgs) {
+  const formData = await args.request.clone().formData();
+  const _action = formData.get("_action");
+  if (_action === "CREATE_PRODUCT") {
+    return createProductAction(args);
+  }
+  if (_action === "CREATE_CATEGORY") {
+    return createCategoryAction(args);
+  }
+  throw new Error("Unknown action");
+}
+
+export const createProductAction = async ({ request }: ActionArgs) => {
   const form = await await request.formData()
   // const imageBuffer = fs.createReadStream('/images/test.png')
   // console.log(imageBuffer)
@@ -91,6 +103,16 @@ export const action = async ({ request }: ActionArgs) => {
   return redirect('/')
 };
 
+
+export const createCategoryAction = async ({request}:ActionArgs) =>{
+  const form = await request.formData();
+  console.log(form.entries());
+  console.log("createCategoryAction working")
+
+  return redirect('/')
+
+}
+
 export default function Index() {
   const data = useLoaderData<typeof loader>();
 
@@ -117,6 +139,14 @@ export default function Index() {
               ))}
             </select>
           </div>
+          <button
+            type="submit"
+            name="_action"
+            value="CREATE_CATEGORY"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            Add Category
+          </button>
           <div className="mb-6">
             <label
               htmlFor="product"
@@ -183,6 +213,8 @@ export default function Index() {
           </div>
           <button
             type="submit"
+            name="_action"
+            value="CREATE_PRODUCT"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Post Product

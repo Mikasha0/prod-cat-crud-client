@@ -1,4 +1,4 @@
-import { unstable_createFileUploadHandler, unstable_createMemoryUploadHandler} from "@remix-run/node";
+import { unstable_createFileUploadHandler} from "@remix-run/node";
 import type { UploadHandler, UploadHandlerPart } from "@remix-run/node";
 
 
@@ -17,11 +17,12 @@ export const fileAndFieldUploadHandler: UploadHandler = async (part) => {
     part.name === "status"
   ) {
     // Process the name and designation form fields
-    const value = await partToString(part);
+    const value = await partToString(part);  
     return value.trim(); // Return the trimmed value
   }
 
   // For other files, use the default fileUploadHandler
+  console.log(fileUploadHandler(part));
   return fileUploadHandler(part);
 };
 

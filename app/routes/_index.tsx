@@ -9,6 +9,10 @@ import { Status, productSchemaObj } from "~/types/z.schema";
 import { fileAndFieldUploadHandler } from "~/utils/fileUploadHandler";
 import { getProductFormData } from "~/utils/formUtils";
 import { badRequest } from "~/utils/request.server";
+import * as fs from 'fs'
+import test from '~/images/test.png'
+
+
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -28,6 +32,9 @@ export const action = async ({ request }: ActionArgs) => {
     request,
     fileAndFieldUploadHandler
   );
+  // const imageBuffer = fs.createReadStream('/images/test.png')
+  // console.log(imageBuffer)
+
   const { categoryId, name, description, highlight, status, image } =
     getProductFormData(form);
   console.log(categoryId, name, description, highlight, status, image);
@@ -38,7 +45,7 @@ export const action = async ({ request }: ActionArgs) => {
     description,
     highlight,
     status,
-    image,
+    image
   });
   if(!parseResult.success){
     const fieldErrors = parseResult.error.format();
@@ -48,16 +55,12 @@ export const action = async ({ request }: ActionArgs) => {
       formError:"Form not submitted correctly",
     })
   }
-  console.log(parseResult.data.image.name)
 
   const API_URL = `http://localhost:3334/api/products`
   console.log(API_URL);
   try{
     const response = await fetch(API_URL,{
       method:'POST',
-      headers:{
-        "Content-Type":"application/json"
-      },
       body:JSON.stringify(parseResult.data)
     });
     const product_data = await response.json()

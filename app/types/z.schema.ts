@@ -31,3 +31,8 @@ export const productSchemaObj = z.object({
   highlight: z.string(),
   status: z.string(),
 });
+
+export const categorySchemaObj = z.object({
+  name: z.string().min(3),
+  status: z.string(),
+});

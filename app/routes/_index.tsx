@@ -1,18 +1,14 @@
 import {
-  unstable_parseMultipartFormData,
-  type ActionArgs,
-  type V2_MetaFunction,
   redirect,
+  type ActionArgs,
+  type V2_MetaFunction
 } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import { Status, productSchemaObj } from "~/types/z.schema";
-import { fileAndFieldUploadHandler } from "~/utils/fileUploadHandler";
+import { Status, categorySchemaObj, productSchemaObj } from "~/types/z.schema";
+import { db } from "~/utils/db.server";
 import { getCategoryFormData, getProductFormData } from "~/utils/formUtils";
 import { badRequest } from "~/utils/request.server";
-import { db } from "~/utils/db.server";
 
-import * as fs from "fs";
-import test from "~/images/test.png";
 import { useState } from "react";
 import AddCategory from "~/component/addCategory";
 
@@ -95,7 +91,33 @@ export const createCategoryAction = async ({request}:ActionArgs)=>{
   const {name, status} = getCategoryFormData(form);
 
   console.log(getCategoryFormData(form));
-  return redirect('/category')
+  const parseResult = categorySchemaObj.safeParse({
+    name,
+    status,
+  });
+
+  if (!parseResult.success) {
+    const fieldErrors = parseResult.error.format();
+    return badRequest({
+      fieldErrors,
+      fields: null,
+      formError: "Form not submitted correctly",
+    });
+  }
+  console.log(parseResult);
+
+  const fields = {
+    name,
+    status,
+  };
+  console.log("fields", fields);
+
+  await db.category.create({
+    data: {
+      ...fields,
+    },
+  });
+  return redirect('/')
 
 }
 
@@ -108,7 +130,7 @@ export default function Index() {
 
 
   return (
-    <div className="flex justify-center items-center h-screen bg-[#f3f4f6] ">
+    <div className="flex justify-center items-center h-screen bg-[#f3f4f6] mb-4 ">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
         <Form method="post">
           <div className="mb-6">
@@ -204,8 +226,8 @@ export default function Index() {
           </div>
           <button
             type="submit"
-            // name="_action"
-            // value="CREATE_PRODUCT"
+            name="_action"
+            value="CREATE_PRODUCT"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Post Product

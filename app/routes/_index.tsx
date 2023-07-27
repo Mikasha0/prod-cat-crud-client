@@ -7,15 +7,14 @@ import {
 import { Form, useLoaderData } from "@remix-run/react";
 import { Status, productSchemaObj } from "~/types/z.schema";
 import { fileAndFieldUploadHandler } from "~/utils/fileUploadHandler";
-import { getProductFormData } from "~/utils/formUtils";
+import { getCategoryFormData, getProductFormData } from "~/utils/formUtils";
 import { badRequest } from "~/utils/request.server";
 import { db } from "~/utils/db.server";
 
-import * as fs from 'fs'
-import test from '~/images/test.png'
+import * as fs from "fs";
+import test from "~/images/test.png";
 import { useState } from "react";
-
-
+import AddCategory from "~/component/addCategory";
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -29,11 +28,10 @@ export const loader = async () => {
   // const data = await API_RESPONSE.json();
   // return data;
   const categoryItems = await db.category.findMany({
-    take:35,
-    select:{id:true,name:true}
+    take: 35,
+    select: { id: true, name: true },
   });
-  return categoryItems
-
+  return categoryItems;
 };
 
 export async function action(args: ActionArgs) {
@@ -49,13 +47,13 @@ export async function action(args: ActionArgs) {
 }
 
 export const createProductAction = async ({ request }: ActionArgs) => {
-  const form = await await request.formData()
+  const form =  await request.formData();
   // const imageBuffer = fs.createReadStream('/images/test.png')
   // console.log(imageBuffer)
 
   const { categoryId, name, description, highlight, status } =
     getProductFormData(form);
-    console.log(getProductFormData(form));
+  console.log(getProductFormData(form));
   const parseResult = productSchemaObj.safeParse({
     categoryId,
     name,
@@ -63,53 +61,40 @@ export const createProductAction = async ({ request }: ActionArgs) => {
     highlight,
     status,
   });
-  if(!parseResult.success){
+  if (!parseResult.success) {
     const fieldErrors = parseResult.error.format();
     return badRequest({
       fieldErrors,
-      fields:null,
-      formError:"Form not submitted correctly",
-    })
+      fields: null,
+      formError: "Form not submitted correctly",
+    });
   }
-  console.log(parseResult)
+  console.log(parseResult);
 
   const fields = {
     categoryId,
     name,
     description,
     highlight,
-    status
-  }
-  console.log("fields",fields)
+    status,
+  };
+  console.log("fields", fields);
 
-   await db.product.create({
-    data:{
+  await db.product.create({
+    data: {
       ...fields,
-    }
-  })
+    },
+  });
 
-  // const API_URL = `http://localhost:3334/api/products`
-  // console.log(API_URL);
-  // try{
-  //   const response = await fetch(API_URL,{
-  //     method:'POST',
-  //     body:JSON.stringify(parseResult.data)
-  //   });
-  //   const product_data = await response.json()
-  //   console.log(product_data);
-  // }catch(error){
-  //   return new Response("API request error", {status:500})
-  // }
-
-  return redirect('/product')
+  return redirect("/product");
 };
 
-
-export const createCategoryAction = async ({request}:ActionArgs) =>{
+export const createCategoryAction = async ({request}:ActionArgs)=>{
+  console.log("bla")
   const form = await request.formData();
-  console.log(form.entries());
-  console.log("createCategoryAction working")
+  const {name, status} = getCategoryFormData(form);
 
+  console.log(getCategoryFormData(form));
   return redirect('/category')
 
 }
@@ -117,15 +102,15 @@ export const createCategoryAction = async ({request}:ActionArgs) =>{
 export default function Index() {
   const data = useLoaderData<typeof loader>();
   const [visible, setVisible] = useState(false);
-
-  const showCategoryField = () =>{
-    setVisible(!visible);
+  const toggleModal = () =>{
+    setVisible(!visible)
   }
+
 
   return (
     <div className="flex justify-center items-center h-screen bg-[#f3f4f6] ">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        <Form method="post" encType="multipart/form-data">
+        <Form method="post">
           <div className="mb-6">
             <label
               htmlFor="category"
@@ -146,29 +131,15 @@ export default function Index() {
             </select>
           </div>
           <button
-            onClick={showCategoryField}
+            type="button"
+            onClick={toggleModal} // Show the modal when the button is clicked
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Add Category
           </button>
-          {visible &&(
-            <>
-                <input
-              type="text"
-              name="category"
-              id="name"
-              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-              required
-            />
-          <button
-            type="submit"
-            name="_action"
-            value="CREATE_CATEGORY"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Add
-          </button>
-          </>
+          {visible && (
+          <AddCategory toggleModal={toggleModal}/>
+
           )}
           <div className="mb-6">
             <label
@@ -182,7 +153,6 @@ export default function Index() {
               name="name"
               id="name"
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-              required
             />
           </div>
           <div className="mb-6">
@@ -197,7 +167,6 @@ export default function Index() {
               name="description"
               id="description"
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-              required
             />
           </div>
           <div className="mb-6">
@@ -212,7 +181,6 @@ export default function Index() {
               name="highlight"
               id="highlight"
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-              required
             />
           </div>
           <div className="mb-6">
@@ -236,8 +204,8 @@ export default function Index() {
           </div>
           <button
             type="submit"
-            name="_action"
-            value="CREATE_PRODUCT"
+            // name="_action"
+            // value="CREATE_PRODUCT"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Post Product

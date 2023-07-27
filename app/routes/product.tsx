@@ -2,7 +2,7 @@ import { useLoaderData } from "@remix-run/react";
 import { loader as getProduct } from '~/loader/getProduct';
 
 export const loader = async () => {
-  return getProduct();
+  return await getProduct();
 };
 
 export default function Product() {

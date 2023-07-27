@@ -10,7 +10,7 @@ import { loader as getCategory } from "~/loader/getCategory";
 import { CategoryIdAndName } from "~/types/categoryIdAndName-types";
 import { Status } from "~/types/z.schema";
 export const loader = async ()=>{
-  return getCategory();
+  return await getCategory();
 }
 
 export async function action(args: ActionArgs) {

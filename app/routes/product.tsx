@@ -1,9 +1,8 @@
 import { useLoaderData } from "@remix-run/react";
-import { db } from "~/utils/db.server";
+import { loader as getProduct } from '~/loader/getProduct';
 
 export const loader = async () => {
-  const product = await db.product.findMany({});
-  return product;
+  return getProduct();
 };
 
 export default function Product() {

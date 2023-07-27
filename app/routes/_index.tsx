@@ -1,34 +1,20 @@
 import {
-  redirect,
+  LoaderArgs,
   type ActionArgs,
   type V2_MetaFunction
 } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import { Status, categorySchemaObj, productSchemaObj } from "~/types/z.schema";
+import { Status } from "~/types/z.schema";
 import { db } from "~/utils/db.server";
-import { getCategoryFormData, getProductFormData } from "~/utils/formUtils";
-import { badRequest } from "~/utils/request.server";
-
 import { useState } from "react";
+import { createCategoryAction } from "~/action/createCategoryAction";
+import { createProductAction } from "~/action/createProductAction";
+import {loader as getCategory} from "~/loader/getCategory"
 import AddCategory from "~/component/addCategory";
 
-export const meta: V2_MetaFunction = () => {
-  return [
-    { title: "PROD-CAT-CRUD-CLIENT" },
-    { name: "description", content: "Welcome to Remix!" },
-  ];
-};
-
-export const loader = async () => {
-  // const API_RESPONSE = await fetch(`http://localhost:3334/api/categories`);
-  // const data = await API_RESPONSE.json();
-  // return data;
-  const categoryItems = await db.category.findMany({
-    take: 35,
-    select: { id: true, name: true },
-  });
-  return categoryItems;
-};
+export const loader = async ()=>{
+  return getCategory();
+}
 
 export async function action(args: ActionArgs) {
   const formData = await args.request.clone().formData();
@@ -42,92 +28,12 @@ export async function action(args: ActionArgs) {
   throw new Error("Unknown action");
 }
 
-export const createProductAction = async ({ request }: ActionArgs) => {
-  const form =  await request.formData();
-  // const imageBuffer = fs.createReadStream('/images/test.png')
-  // console.log(imageBuffer)
-
-  const { categoryId, name, description, highlight, status } =
-    getProductFormData(form);
-  console.log(getProductFormData(form));
-  const parseResult = productSchemaObj.safeParse({
-    categoryId,
-    name,
-    description,
-    highlight,
-    status,
-  });
-  if (!parseResult.success) {
-    const fieldErrors = parseResult.error.format();
-    return badRequest({
-      fieldErrors,
-      fields: null,
-      formError: "Form not submitted correctly",
-    });
-  }
-  console.log(parseResult);
-
-  const fields = {
-    categoryId,
-    name,
-    description,
-    highlight,
-    status,
-  };
-  console.log("fields", fields);
-
-  await db.product.create({
-    data: {
-      ...fields,
-    },
-  });
-
-  return redirect("/product");
-};
-
-export const createCategoryAction = async ({request}:ActionArgs)=>{
-  console.log("bla")
-  const form = await request.formData();
-  const {name, status} = getCategoryFormData(form);
-
-  console.log(getCategoryFormData(form));
-  const parseResult = categorySchemaObj.safeParse({
-    name,
-    status,
-  });
-
-  if (!parseResult.success) {
-    const fieldErrors = parseResult.error.format();
-    return badRequest({
-      fieldErrors,
-      fields: null,
-      formError: "Form not submitted correctly",
-    });
-  }
-  console.log(parseResult);
-
-  const fields = {
-    name,
-    status,
-  };
-  console.log("fields", fields);
-
-  await db.category.create({
-    data: {
-      ...fields,
-    },
-  });
-  return redirect('/')
-
-}
-
 export default function Index() {
   const data = useLoaderData<typeof loader>();
   const [visible, setVisible] = useState(false);
-  const toggleModal = () =>{
-    setVisible(!visible)
-  }
-
+  const toggleModal = () => {
+    setVisible(!visible);
+  };
 
   return (
     <div className="flex justify-center items-center h-screen bg-[#f3f4f6] mb-4 ">
@@ -145,7 +51,7 @@ export default function Index() {
               name="categoryId"
               className="shadow-sm bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
             >
-              {data.map((category: any) => (
+              {data.map((category:any) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
                 </option>
@@ -159,10 +65,7 @@ export default function Index() {
           >
             Add Category
           </button>
-          {visible && (
-          <AddCategory toggleModal={toggleModal}/>
-
-          )}
+          {visible && <AddCategory toggleModal={toggleModal} />}
           <div className="mb-6">
             <label
               htmlFor="product"

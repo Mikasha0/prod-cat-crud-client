@@ -1,26 +1,6 @@
-import { ActionArgs, redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 import { Status } from "~/types/z.schema";
-import { getCategoryFormData } from "~/utils/formUtils";
 
-// export async function action(args: ActionArgs) {
-//   const formData = await args.request.clone().formData();
-//   const _action = formData.get("_action");
-//   if (_action === "CREATE_CATEGORY") {
-//     return createCategoryAction(args);
-//   }
-//   throw new Error("Unknown action");
-// }
-
-// export const createCategoryAction = async ({request}:ActionArgs)=>{
-//   console.log("bla")
-//   const form = await request.formData();
-//   const {name, status} = getCategoryFormData(form);
-
-//   console.log(getCategoryFormData(form));
-//   return redirect('/category')
-
-// }
 
 export default function AddCategory({ toggleModal }: any) {
   return (

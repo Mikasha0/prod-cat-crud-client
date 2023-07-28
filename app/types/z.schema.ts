@@ -1,3 +1,4 @@
+import { withZod } from "@remix-validated-form/with-zod";
 import { z } from "zod";
 
 export const Status = ["PENDING", "ACTIVE", "DELETE"] as const;
@@ -33,6 +34,8 @@ export const productSchemaObj = z.object({
   highlight: zString(2, 80),
   status: zString(3, 15),
 });
+
+export const validator = withZod(productSchemaObj);
 
 export const categorySchemaObj = z.object({
   name: zString(3, 50),

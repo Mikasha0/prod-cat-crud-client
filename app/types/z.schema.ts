@@ -22,17 +22,19 @@ const ACCEPTED_EXTENSIONS = WHITELISTED_MIMES.map((mime) => mime.split("/")[1])
   .join(", ")
   .slice(0, -1);
 
-
+const zString = (minLength = 1, maxLength = 100) => {
+  return z.string().min(minLength).max(maxLength);
+};
 
 export const productSchemaObj = z.object({
-  categoryId: z.string(),
-  name: z.string().min(3),
-  description: z.string(),
-  highlight: z.string(),
-  status: z.string(),
+  categoryId: zString(),
+  name: zString(3, 50),
+  description: zString(3, 150),
+  highlight: zString(2, 80),
+  status: zString(3, 15),
 });
 
 export const categorySchemaObj = z.object({
-  name: z.string().min(3),
-  status: z.string(),
+  name: zString(3, 50),
+  status: zString(3,15),
 });

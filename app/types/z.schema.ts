@@ -35,9 +35,11 @@ export const productSchemaObj = z.object({
   status: zString(3, 15),
 });
 
-export const validator = withZod(productSchemaObj);
+export const productValidator = withZod(productSchemaObj);
 
 export const categorySchemaObj = z.object({
   name: zString(3, 50),
   status: zString(3,15),
 });
+
+export const categoryValidator = withZod(categorySchemaObj);

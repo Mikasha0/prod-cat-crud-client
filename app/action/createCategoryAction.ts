@@ -1,35 +1,21 @@
 import { ActionArgs, redirect } from "@remix-run/node";
-import { categorySchemaObj } from "~/types/z.schema";
-import { db } from "~/utils/db.server";
-import { getCategoryFormData } from "~/utils/formUtils";
+import { validationError } from "remix-validated-form";
+import { categoryValidator } from "~/types/z.schema";
+import { createCategory } from "~/utils/dbHelpers";
 import { badRequest } from "~/utils/request.server";
 
 export const createCategoryAction = async ({ request }: ActionArgs) => {
-  const form = await request.formData();
-  const { name, status } = getCategoryFormData(form);
-
-  const parseResult = categorySchemaObj.safeParse({
-    name,
-    status,
-  });
-
-  if (!parseResult.success) {
-    const fieldErrors = parseResult.error.format();
+  const form = await categoryValidator.validate(await request.formData());
+  console.log(form);
+  if (form.error) {
+    const fieldErrors = validationError(form.error);
     return badRequest({
       fieldErrors,
       fields: null,
-      formError: "Form not submitted correctly",
+      formErrors: "Form not submitted correctly",
     });
   }
-  const fields = {
-    name,
-    status,
-  };
-
-  await db.category.create({
-    data: {
-      ...fields,
-    },
-  });
+  const category = form.data;
+  await createCategory(category);
   return redirect("/");
 };

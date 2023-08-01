@@ -1,7 +1,8 @@
 import { Form } from "@remix-run/react";
 import { AddCategoryProps } from "~/types/add-category-prop.types";
 import { Status } from "~/types/z.schema";
-import ActionButton from "./actionButton";
+import ActionButton from "~/component/actionButton";
+import NormalButton from "./normalButton";
 
 export default function AddCategory({ toggleModal }: AddCategoryProps) {
   return (
@@ -41,13 +42,14 @@ export default function AddCategory({ toggleModal }: AddCategoryProps) {
               ))}
             </select>
           <div className="mt-4 flex justify-end">
-            <button
+            {/* <button
               type="button"
               className="text-gray-600 hover:text-gray-800 font-medium mr-4"
               onClick={toggleModal}
             >
               Cancel
-            </button>
+            </button> */}
+            <NormalButton buttonName="Cancel" onClick={toggleModal}/>
             {/* <button
               type="submit"
               name="_action"

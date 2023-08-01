@@ -10,7 +10,8 @@ import { CategoryIdAndName } from "~/types/categoryIdAndName.types";
 
 import { Status, productValidator } from "~/types/z.schema";
 import ActionButton from "~/component/actionButton";
-import FormInput from "~/utils/inputUtils";
+import FormInput from "~/component/formInput";
+import NormalButton from "~/component/normalButton";
 export const loader = async () => {
   return await getCategory();
 };
@@ -80,14 +81,8 @@ export default function Index() {
           <FormInput label="Product Name" name="name" />
           <FormInput label="Description" name="description" />
           <FormInput label="Highlight" name="highlight" />
-          <ActionButton buttonName="Post Product" value="CREATE_PRODUCT"/>
-          <button
-            type="button"
-            onClick={toggleModal}
-            className=" mx-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Add Category
-          </button>
+          <ActionButton buttonName="Post Product" value="CREATE_PRODUCT" />
+          <NormalButton  buttonName="Add Category" onClick={toggleModal} />
           {visible && <AddCategory toggleModal={toggleModal} />}
         </ValidatedForm>
       </div>

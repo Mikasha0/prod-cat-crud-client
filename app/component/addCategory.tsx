@@ -1,22 +1,24 @@
-import { Form } from "@remix-run/react";
+import { ValidatedForm } from "remix-validated-form";
+import ActionButton from "~/component/actionButton";
 import { AddCategoryProps } from "~/types/add-category-prop.types";
 import { Status, categoryValidator } from "~/types/z.schema";
-import ActionButton from "~/component/actionButton";
-import NormalButton from "./normalButton";
 import DynamicDropDown from "./dynamicDropDown";
-import { ValidatedForm } from "remix-validated-form";
-
-import FormInput from "./formInput";
+import NormalButton from "./normalButton";
+import FormInput from "~/component/formInput";
+import { db } from "~/utils/db.server";
 
 export default function AddCategory({ toggleModal }: AddCategoryProps) {
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div
-        className="absolute inset-0 bg-gray-900 opacity-70"
-      ></div>
+      <div className="absolute inset-0 bg-gray-900 opacity-70"></div>
       <div className="bg-white p-6 rounded-lg z-10">
-        <ValidatedForm validator={categoryValidator} subaction="form2" method="POST">
-          <FormInput label="Category Name" name="categoryName"/>
+        <ValidatedForm
+          validator={categoryValidator}
+          subaction="form2"
+          method="POST"
+        >
+          <FormInput label="Category Name" name="categoryName" />
           <DynamicDropDown
             labelName="Status:"
             name="status"

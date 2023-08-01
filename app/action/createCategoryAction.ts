@@ -4,10 +4,10 @@ import { categoryValidator } from "~/types/z.schema";
 import { createCategory } from "~/utils/dbHelpers";
 
 export const createCategoryAction = async ({ request }: ActionArgs) => {
-  const form = await categoryValidator.validate(await request.formData());
-  if (form.error) {
-    return validationError(form.error);
-  }
-  await createCategory(form.data);
-  return redirect("/category");
+    const result = await categoryValidator.validate(await request.formData());
+    if (result.error) {
+      return validationError(result.error);
+    }
+    await createCategory(result.data);
+    return redirect("/category");
 };

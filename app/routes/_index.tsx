@@ -1,18 +1,19 @@
-import {
-  type ActionArgs
-} from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { type ActionArgs } from "@remix-run/node";
+import { useActionData, useLoaderData } from "@remix-run/react";
 import { useState } from "react";
 import { createCategoryAction } from "~/action/createCategoryAction";
 import { createProductAction } from "~/action/createProductAction";
 import AddCategory from "~/component/addCategory";
 import ProductInputField from "~/component/productInput";
 import { loader as getCategory } from "~/loader/getCategory";
-import { CategoryIdAndName } from "~/types/categoryIdAndName-types";
-import { Status } from "~/types/z.schema";
-export const loader = async ()=>{
+import { CategoryIdAndName } from "~/types/categoryIdAndName.types";
+import { ValidatedForm } from "remix-validated-form";
+
+import { Status, productValidator } from "~/types/z.schema";
+import FormInput from "~/utils/inputUtils";
+export const loader = async () => {
   return await getCategory();
-}
+};
 
 export async function action(args: ActionArgs) {
   const formData = await args.request.clone().formData();
@@ -32,11 +33,12 @@ export default function Index() {
   const toggleModal = () => {
     setVisible(!visible);
   };
+  const actionData = useActionData<typeof action>();
 
   return (
     <div className="flex justify-center items-center h-screen bg-[#f3f4f6] mb-4 ">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        <Form method="post">
+        <ValidatedForm validator={productValidator} method="post">
           <div className="mb-6">
             <label
               htmlFor="category"
@@ -49,7 +51,7 @@ export default function Index() {
               name="categoryId"
               className="shadow-sm bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
             >
-              {data.map((category:CategoryIdAndName) => (
+              {data.map((category: CategoryIdAndName) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
                 </option>
@@ -75,9 +77,9 @@ export default function Index() {
               ))}
             </select>
           </div>
-          <ProductInputField/>
-
-         
+          <FormInput label="Product Name" name="name" />
+          <FormInput label="Description" name="description" />
+          <FormInput label="Highlight" name="highlight" />
           <button
             type="submit"
             name="_action"
@@ -94,7 +96,7 @@ export default function Index() {
             Add Category
           </button>
           {visible && <AddCategory toggleModal={toggleModal} />}
-        </Form>
+        </ValidatedForm>
       </div>
     </div>
   );

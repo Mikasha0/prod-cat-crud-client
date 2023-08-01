@@ -23,15 +23,23 @@ const ACCEPTED_EXTENSIONS = WHITELISTED_MIMES.map((mime) => mime.split("/")[1])
   .join(", ")
   .slice(0, -1);
 
-const zString = (minLength = 1, maxLength = 100) => {
-  return z.string().min(minLength).max(maxLength);
+const zString = (
+  minLength = 1,
+  maxLength = 100,
+  field = "name",
+  minMessage = "should not be empty or less than",
+  maxMessage = "should not be greater than "
+) => {
+  return z
+    .string()
+    .min(minLength, { message: field + " " + minMessage + " " + minLength })
+    .max(maxLength, { message: maxMessage + " " + maxLength });
 };
-
 export const productSchemaObj = z.object({
   categoryId: zString(),
-  name: zString(3, 50),
-  description: zString(3, 150),
-  highlight: zString(2, 80),
+  name: zString(3, 50, "Name"),
+  description: zString(3, 150, "Description"),
+  highlight: zString(2, 80, "Highlight"),
   status: zString(3, 15),
 });
 
@@ -39,7 +47,7 @@ export const productValidator = withZod(productSchemaObj);
 
 export const categorySchemaObj = z.object({
   name: zString(3, 50),
-  status: zString(3,15),
+  status: zString(3, 15),
 });
 
 export const categoryValidator = withZod(categorySchemaObj);

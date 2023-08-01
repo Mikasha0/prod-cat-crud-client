@@ -1,9 +1,15 @@
 import { withZod } from "@remix-validated-form/with-zod";
 import { z } from "zod";
 
-export const Status = ["PENDING", "ACTIVE", "DELETE"] as const;
+// export const Status = ["PENDING", "ACTIVE", "DELETE"];
 
-z.enum(Status);
+export const Status = [
+  { state: "ACTIVE" },
+  { state: "PENDING" },
+  { state: "DELETE" },
+];
+
+
 
 export const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -46,8 +52,8 @@ export const productSchemaObj = z.object({
 export const productValidator = withZod(productSchemaObj);
 
 export const categorySchemaObj = z.object({
-  name: zString(3, 50),
   status: zString(3, 15),
+  name: zString(3, 50),
 });
 
 export const categoryValidator = withZod(categorySchemaObj);

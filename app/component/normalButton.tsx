@@ -1,10 +1,4 @@
-import React, { MouseEventHandler } from 'react';
-
-interface NormalButtonProps {
-  buttonName: string;
-  type?: 'button' | 'submit' | 'reset';
-  onClick?: MouseEventHandler;
-}
+import { NormalButtonProps } from "~/types/normalButtonProps.types";
 
 export default function NormalButton({ buttonName, type = 'button', onClick }: NormalButtonProps) {
   return (

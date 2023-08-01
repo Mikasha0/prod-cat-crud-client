@@ -1,15 +1,15 @@
 import { type ActionArgs } from "@remix-run/node";
 import { useActionData, useLoaderData } from "@remix-run/react";
 import { useState } from "react";
+import { ValidatedForm } from "remix-validated-form";
 import { createCategoryAction } from "~/action/createCategoryAction";
 import { createProductAction } from "~/action/createProductAction";
 import AddCategory from "~/component/addCategory";
-import ProductInputField from "~/component/productInput";
 import { loader as getCategory } from "~/loader/getCategory";
 import { CategoryIdAndName } from "~/types/categoryIdAndName.types";
-import { ValidatedForm } from "remix-validated-form";
 
 import { Status, productValidator } from "~/types/z.schema";
+import ActionButton from "~/component/actionButton";
 import FormInput from "~/utils/inputUtils";
 export const loader = async () => {
   return await getCategory();
@@ -80,14 +80,7 @@ export default function Index() {
           <FormInput label="Product Name" name="name" />
           <FormInput label="Description" name="description" />
           <FormInput label="Highlight" name="highlight" />
-          <button
-            type="submit"
-            name="_action"
-            value="CREATE_PRODUCT"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Post Product
-          </button>
+          <ActionButton buttonName="Post Product" value="CREATE_PRODUCT"/>
           <button
             type="button"
             onClick={toggleModal}

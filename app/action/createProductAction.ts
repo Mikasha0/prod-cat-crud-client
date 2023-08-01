@@ -19,21 +19,7 @@ export const createProductAction = async ({ request }: ActionArgs) => {
       });
   }
 
-  const { categoryId, name, description, highlight, status } = result.data;
-
-  const productData = {
-    categoryId,
-    name,
-    description,
-    highlight,
-    status,
-  };
-  await db.product.create({
-    data:{...productData}
-  })
-
-  const formPayload = Object.fromEntries(await request.formData());
-
-  console.log(formPayload);
+  const product = result.data;
+  await createProduct(product)
   return redirect("/product");
   };

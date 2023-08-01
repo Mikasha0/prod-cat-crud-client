@@ -1,6 +1,7 @@
 import { Form } from "@remix-run/react";
 import { AddCategoryProps } from "~/types/add-category-prop.types";
 import { Status } from "~/types/z.schema";
+import ActionButton from "./actionButton";
 
 export default function AddCategory({ toggleModal }: AddCategoryProps) {
   return (
@@ -47,14 +48,15 @@ export default function AddCategory({ toggleModal }: AddCategoryProps) {
             >
               Cancel
             </button>
-            <button
+            {/* <button
               type="submit"
               name="_action"
             value="CREATE_CATEGORY"
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
             >
               Add
-            </button>
+            </button> */}
+            <ActionButton buttonName="Add" value="CREATE_CATEGORY"/>
           </div>
         </Form>
       </div>

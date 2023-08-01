@@ -33,7 +33,6 @@ export default function Index() {
   const toggleModal = () => {
     setVisible(!visible);
   };
-  const actionData = useActionData<typeof action>();
 
   return (
     <div className="flex justify-center items-center h-screen bg-[#f3f4f6] mb-4 ">
@@ -44,7 +43,7 @@ export default function Index() {
             name="categoryId"
             data={data}
             dataKey="id"
-            dataValueKey="name"
+            dataValueKey="categoryName"
           />
 
           <DynamicDropDown

@@ -7,7 +7,7 @@ async function main() {
   // Seed data for the category table
   await db.category.create({
     data: 
-      { name: 'Category A', status: 'Active' },
+      { categoryName: 'Category A', status: 'Active' },
       // Add more category seed data as needed
     
   });

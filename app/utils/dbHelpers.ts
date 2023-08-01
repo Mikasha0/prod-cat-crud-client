@@ -8,7 +8,7 @@ export async function createProduct(data: Product) {
   });
 }
 
-export async function createCategory(data: any) {
+export async function createCategory(data: Category) {
   await db.category.create({
   data,
   });

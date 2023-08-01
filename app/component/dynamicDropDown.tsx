@@ -1,4 +1,3 @@
-import React from 'react';
 
 interface DynamicDropDownProps {
   labelName: string;
@@ -6,7 +5,6 @@ interface DynamicDropDownProps {
   data: Array<any>;
   dataKey: string; 
   dataValueKey: string; 
-
 }
 
 export default function DynamicDropDown({ labelName, name, data, dataKey, dataValueKey }: DynamicDropDownProps) {

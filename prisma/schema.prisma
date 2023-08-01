@@ -12,7 +12,7 @@ datasource db {
 
 model category {
   id       String @id @default(uuid())
-  name     String
+  categoryName     String
   status   String
   product  product[]
 }

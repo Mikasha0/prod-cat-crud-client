@@ -1,4 +1,4 @@
-import { ActionButtonProps } from "~/types/actionButton.types";
+import { ActionButtonProps } from "~/types/actionButtonProps.types";
 
 export default function ActionButton({ buttonName, value }: ActionButtonProps) {
   return (

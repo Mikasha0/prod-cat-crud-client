@@ -1,8 +1,6 @@
 import { withZod } from "@remix-validated-form/with-zod";
 import { z } from "zod";
-
-// export const Status = ["PENDING", "ACTIVE", "DELETE"];
-
+import Category from "~/routes/category";
 export const Status = [
   { state: "ACTIVE" },
   { state: "PENDING" },
@@ -41,6 +39,7 @@ const zString = (
     .min(minLength, { message: field + " " + minMessage + " " + minLength })
     .max(maxLength, { message: maxMessage + " " + maxLength });
 };
+
 export const productSchemaObj = z.object({
   categoryId: zString(),
   name: zString(3, 50, "Name"),
@@ -53,7 +52,7 @@ export const productValidator = withZod(productSchemaObj);
 
 export const categorySchemaObj = z.object({
   status: zString(3, 15),
-  name: zString(3, 50),
+  categoryName: zString(3, 55,"Category name"),
 });
 
 export const categoryValidator = withZod(categorySchemaObj);

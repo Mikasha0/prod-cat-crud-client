@@ -13,16 +13,15 @@ export default function AddCategory({ toggleModal }: AddCategoryProps) {
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div
         className="absolute inset-0 bg-gray-900 opacity-70"
-        onClick={toggleModal}
       ></div>
       <div className="bg-white p-6 rounded-lg z-10">
-        <ValidatedForm validator={categoryValidator} method="post">
+        <ValidatedForm validator={categoryValidator} subaction="form2" method="POST">
           <FormInput label="Category Name" name="categoryName"/>
           <DynamicDropDown
             labelName="Status:"
             name="status"
             data={Status}
-            dataKey="Status"
+            dataKey="state"
             dataValueKey="state"
           />
           <div className="mt-4 flex justify-end">

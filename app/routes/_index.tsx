@@ -1,19 +1,17 @@
-import { type ActionArgs } from "@remix-run/node";
-import { useActionData, useLoaderData } from "@remix-run/react";
+import { LoaderArgs, type ActionArgs } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 import { useState } from "react";
 import { ValidatedForm } from "remix-validated-form";
 import { createCategoryAction } from "~/action/createCategoryAction";
 import { createProductAction } from "~/action/createProductAction";
-import AddCategory from "~/component/addCategory";
-import { loader as getCategory } from "~/loader/getCategory";
 import ActionButton from "~/component/actionButton";
+import AddCategory from "~/component/addCategory";
 import DynamicDropDown from "~/component/dynamicDropDown";
 import FormInput from "~/component/formInput";
 import NormalButton from "~/component/normalButton";
+import { loader as getCategory } from "~/loader/getCategory";
 import { Status, productValidator } from "~/types/z.schema";
-export const loader = async () => {
-  return await getCategory();
-};
+export const loader = async () => await getCategory();
 
 export async function action(args: ActionArgs) {
   const formData = await args.request.clone().formData();

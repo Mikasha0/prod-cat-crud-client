@@ -1,11 +1,11 @@
-import { LoaderArgs, type ActionArgs } from "@remix-run/node";
+import { type ActionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useState } from "react";
 import { ValidatedForm } from "remix-validated-form";
 import { createCategoryAction } from "~/action/createCategoryAction";
 import { createProductAction } from "~/action/createProductAction";
 import ActionButton from "~/component/actionButton";
-import AddCategory from "~/component/addCategory";
+import AddCategory from "~/component/categoryModal";
 import DynamicDropDown from "~/component/dynamicDropDown";
 import FormInput from "~/component/formInput";
 import NormalButton from "~/component/normalButton";

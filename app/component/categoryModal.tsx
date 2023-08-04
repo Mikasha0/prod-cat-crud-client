@@ -1,11 +1,10 @@
 import { ValidatedForm } from "remix-validated-form";
 import ActionButton from "~/component/actionButton";
+import FormInput from "~/component/formInput";
 import { AddCategoryProps } from "~/types/add-category-prop.types";
 import { Status, categoryValidator } from "~/types/z.schema";
 import DynamicDropDown from "./dynamicDropDown";
 import NormalButton from "./normalButton";
-import FormInput from "~/component/formInput";
-import { db } from "~/utils/db.server";
 
 export default function AddCategory({ toggleModal }: AddCategoryProps) {
 
